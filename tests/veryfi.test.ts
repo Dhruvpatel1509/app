@@ -11,7 +11,7 @@ describe('Veryfi OCR request format', () => {
   });
 
   it('sends the documented JSON payload with a base64 file_data field', async () => {
-    const fetchMock = vi.fn(async () => ({
+    const fetchMock = vi.fn(async (_input: RequestInfo | URL, _init?: RequestInit) => ({
       ok: true,
       status: 200,
       text: async () => JSON.stringify({
