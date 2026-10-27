@@ -31,8 +31,9 @@ describe('Currency & Minor Unit Conversions', () => {
   });
 
   it('formats currency strings properly', () => {
-    expect(formatCurrency(1250, 'USD')).toContain('12.50');
-    expect(formatCurrency(0, 'USD')).toContain('0.00');
+    expect(formatCurrency(1250, 'EUR')).toMatch(/12[,.]50/);
+    expect(formatCurrency(1250, 'EUR')).toContain('€');
+    expect(formatCurrency(0, 'EUR')).toMatch(/0[,.]00/);
   });
 });
 

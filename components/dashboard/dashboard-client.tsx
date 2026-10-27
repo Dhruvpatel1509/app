@@ -39,7 +39,7 @@ export function DashboardClient({ userId, data }: DashboardClientProps) {
         owed_amount_minor: s.owed_amount_minor,
         expense: {
           paid_by: s.expense?.paid_by,
-          currency_code: s.expense?.currency_code ?? 'USD',
+          currency_code: s.expense?.currency_code ?? 'EUR',
         },
       })),
     settlements.map((s) => ({

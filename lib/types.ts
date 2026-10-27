@@ -3,7 +3,7 @@
 // All monetary values are stored as integer minor units (cents)
 // ============================================================
 
-export type CurrencyCode = string; // ISO 4217 e.g. 'USD', 'EUR'
+export type CurrencyCode = string; // ISO 4217 — Cashual uses EUR
 
 // ============================================================
 // Auth & Profiles
@@ -205,10 +205,10 @@ export interface Receipt {
 // Veryfi API response shape (relevant fields)
 export interface VeryfiReceiptResponse {
   id: number;
-  vendor: {
-    name: string;
+  vendor?: {
+    name?: string;
     raw_name?: string;
-  };
+  } | null;
   date: string;
   currency_code: string;
   subtotal: number;

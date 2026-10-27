@@ -69,7 +69,7 @@ export function AddExpenseClient({
   // Form Fields
   const [description, setDescription] = useState('');
   const [amountStr, setAmountStr] = useState('');
-  const [currencyCode, setCurrencyCode] = useState(userProfile?.preferred_currency || 'USD');
+  const [currencyCode] = useState('EUR');
   const [date, setDate] = useState(() => new Date().toISOString().split('T')[0]);
   const [category, setCategory] = useState<ExpenseCategory>('dining');
   const [selectedGroupId, setSelectedGroupId] = useState<string>(initialGroupId || '');
@@ -121,7 +121,6 @@ export function AddExpenseClient({
   useEffect(() => {
     if (selectedGroupId) {
       const grp = groups.find((g) => g.id === selectedGroupId);
-      if (grp?.currency_code) setCurrencyCode(grp.currency_code);
       if (grp?.members) {
         setSelectedUserIds(grp.members.map((m: any) => m.user_id));
       }
@@ -319,7 +318,7 @@ export function AddExpenseClient({
               </label>
               <div className="relative">
                 <span className="absolute left-3.5 top-1/2 -translate-y-1/2 text-stone-400 font-bold">
-                  $
+                  €
                 </span>
                 <input
                   type="number"
@@ -498,7 +497,7 @@ export function AddExpenseClient({
                     : 'text-stone-500 hover:text-stone-800'
                 )}
               >
-                Exact ($)
+                Exact (€)
               </button>
               <button
                 type="button"
@@ -556,7 +555,7 @@ export function AddExpenseClient({
                     {splitMethod === 'exact' && (
                       <div className="relative w-28">
                         <span className="absolute left-2.5 top-1/2 -translate-y-1/2 text-stone-400 text-xs">
-                          $
+                          €
                         </span>
                         <input
                           type="number"
@@ -608,7 +607,7 @@ export function AddExpenseClient({
                     {/* Calculated Share Result */}
                     <div className="text-right min-w-[70px]">
                       <span className="font-mono text-sm font-bold text-stone-900">
-                        {alloc ? formatCurrency(alloc.owed_amount_minor, currencyCode) : '$0.00'}
+                        {alloc ? formatCurrency(alloc.owed_amount_minor, currencyCode) : formatCurrency(0)}
                       </span>
                     </div>
                   </div>

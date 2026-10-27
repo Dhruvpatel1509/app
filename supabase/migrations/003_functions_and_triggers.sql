@@ -37,7 +37,7 @@ BEGIN
     NEW.id,
     final_username,
     COALESCE(NEW.raw_user_meta_data->>'display_name', final_username),
-    COALESCE(NEW.raw_user_meta_data->>'preferred_currency', 'USD')
+    COALESCE(NEW.raw_user_meta_data->>'preferred_currency', 'EUR')
   );
   RETURN NEW;
 END;
@@ -130,7 +130,7 @@ GROUP BY es.user_id, e.paid_by, e.currency_code;
 CREATE OR REPLACE FUNCTION public.get_balance_between_users(
   p_user_a UUID,
   p_user_b UUID,
-  p_currency TEXT DEFAULT 'USD'
+  p_currency TEXT DEFAULT 'EUR'
 )
 RETURNS BIGINT
 LANGUAGE plpgsql

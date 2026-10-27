@@ -103,17 +103,6 @@ export function uniqueBy<T>(items: T[], key: keyof T): T[] {
 // ============================================================
 export const SUPPORTED_CURRENCIES = [
   { code: 'EUR', name: 'Euro', symbol: '€' },
-  { code: 'USD', name: 'US Dollar', symbol: '$' },
-  { code: 'GBP', name: 'British Pound', symbol: '£' },
-  { code: 'JPY', name: 'Japanese Yen', symbol: '¥' },
-  { code: 'CAD', name: 'Canadian Dollar', symbol: 'C$' },
-  { code: 'AUD', name: 'Australian Dollar', symbol: 'A$' },
-  { code: 'CHF', name: 'Swiss Franc', symbol: 'CHF' },
-  { code: 'INR', name: 'Indian Rupee', symbol: '₹' },
-  { code: 'SGD', name: 'Singapore Dollar', symbol: 'S$' },
-  { code: 'HKD', name: 'Hong Kong Dollar', symbol: 'HK$' },
-  { code: 'MXN', name: 'Mexican Peso', symbol: 'MX$' },
-  { code: 'BRL', name: 'Brazilian Real', symbol: 'R$' },
 ] as const;
 
 export function getCurrencySymbol(code: string = 'EUR'): string {

@@ -58,7 +58,7 @@ export function ReceiptReviewClient({
   // Receipt meta
   const [merchant, setMerchant] = useState(receipt.merchant || 'Unknown Merchant');
   const [date, setDate] = useState(receipt.receipt_date || new Date().toISOString().split('T')[0]);
-  const [currencyCode, setCurrencyCode] = useState(receipt.currency_code || 'USD');
+  const [currencyCode, setCurrencyCode] = useState(receipt.currency_code || 'EUR');
   const [category, setCategory] = useState<ExpenseCategory>('dining');
   const [selectedGroupId, setSelectedGroupId] = useState('');
   const [paidByUserId, setPaidByUserId] = useState(currentUserId);
@@ -514,7 +514,7 @@ export function ReceiptReviewClient({
               {/* Line Total Input */}
               <div className="relative w-28 shrink-0">
                 <span className="absolute left-2.5 top-1/2 -translate-y-1/2 text-stone-400 text-xs">
-                  $
+                  €
                 </span>
                 <input
                   type="number"
@@ -595,9 +595,9 @@ export function ReceiptReviewClient({
 
           <div className="space-y-3">
             <div className="flex items-center justify-between gap-4">
-              <label className="text-xs font-medium text-stone-700">Tax Amount ($)</label>
+              <label className="text-xs font-medium text-stone-700">Tax Amount (€)</label>
               <div className="relative w-32">
-                <span className="absolute left-2.5 top-1/2 -translate-y-1/2 text-stone-400 text-xs">$</span>
+                <span className="absolute left-2.5 top-1/2 -translate-y-1/2 text-stone-400 text-xs">€</span>
                 <input
                   type="number"
                   step="0.01"
@@ -640,9 +640,9 @@ export function ReceiptReviewClient({
             </div>
 
             <div className="border-t border-stone-100 pt-3 flex items-center justify-between gap-4">
-              <label className="text-xs font-medium text-stone-700">Tip Amount ($)</label>
+              <label className="text-xs font-medium text-stone-700">Tip Amount (€)</label>
               <div className="relative w-32">
-                <span className="absolute left-2.5 top-1/2 -translate-y-1/2 text-stone-400 text-xs">$</span>
+                <span className="absolute left-2.5 top-1/2 -translate-y-1/2 text-stone-400 text-xs">€</span>
                 <input
                   type="number"
                   step="0.01"

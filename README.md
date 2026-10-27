@@ -74,10 +74,11 @@ NEXT_PUBLIC_SUPABASE_URL=https://your-project.supabase.co
 NEXT_PUBLIC_SUPABASE_ANON_KEY=your-anon-key
 NEXT_PUBLIC_APP_URL=http://localhost:3000
 
-# Optional: Veryfi OCR credentials for production receipt scanning
-# VERYFI_CLIENT_ID=your-client-id
-# VERYFI_USERNAME=your-username
-# VERYFI_API_KEY=your-api-key
+# Veryfi OCR (required for real receipt scans; demo mode works without this)
+VERYFI_CLIENT_ID=your-client-id
+VERYFI_USERNAME=your-username
+VERYFI_API_KEY=your-api-key
+VERYFI_CLIENT_SECRET=your-client-secret
 ```
 
 ### 4. Database Setup
@@ -85,6 +86,7 @@ Execute the migration scripts in your Supabase SQL Editor in order:
 1. `supabase/migrations/001_initial_schema.sql` (Tables, constraints, minor-unit money rules)
 2. `supabase/migrations/002_rls_policies.sql` (Row Level Security policies)
 3. `supabase/migrations/003_functions_and_triggers.sql` (Auto-profile creation on signup, timestamps)
+4. `supabase/migrations/004_receipts_storage.sql` (Receipts storage bucket + EUR currency)
 
 ### 5. Run Development Server
 ```bash

@@ -1,6 +1,59 @@
 import { NextResponse } from 'next/server';
 import { createClient } from '@/lib/supabase/server';
 import { toMinorUnits } from '@/lib/calculations';
+import {
+  getVeryfiCredentials,
+  normalizeCurrencyCode,
+  normalizeReceiptDate,
+  processReceiptWithVeryfi,
+} from '@/lib/veryfi';
+import type { VeryfiReceiptResponse } from '@/lib/types';
+
+const SAMPLE_OCR: VeryfiReceiptResponse = {
+  id: 991823,
+  vendor: { name: 'Bäckerei Schmidt' },
+  date: new Date().toISOString().split('T')[0],
+  currency_code: 'EUR',
+  subtotal: 18.4,
+  tax: 1.6,
+  tip: 0,
+  discount: 0,
+  total: 20.0,
+  line_items: [
+    {
+      id: 1,
+      description: 'Vollkornbrot',
+      quantity: 1,
+      unit_price: 4.5,
+      total: 4.5,
+      category: 'grocery',
+    },
+    {
+      id: 2,
+      description: 'Käsebrötchen',
+      quantity: 2,
+      unit_price: 2.2,
+      total: 4.4,
+      category: 'grocery',
+    },
+    {
+      id: 3,
+      description: 'Cappuccino',
+      quantity: 2,
+      unit_price: 3.5,
+      total: 7.0,
+      category: 'dining',
+    },
+    {
+      id: 4,
+      description: 'Apfelstrudel',
+      quantity: 1,
+      unit_price: 2.5,
+      total: 2.5,
+      category: 'dining',
+    },
+  ],
+};
 
 export async function POST(request: Request) {
   try {
@@ -17,6 +70,33 @@ export async function POST(request: Request) {
     const file = formData.get('file') as File | null;
     const isSample = formData.get('is_sample') === 'true';
 
+    if (!isSample && !file) {
+      return NextResponse.json({ error: 'Please upload a receipt image or PDF.' }, { status: 400 });
+    }
+
+    let ocrData: VeryfiReceiptResponse;
+
+    if (isSample) {
+      ocrData = SAMPLE_OCR;
+    } else {
+      if (!getVeryfiCredentials()) {
+        return NextResponse.json(
+          { error: 'Veryfi OCR is not configured. Add credentials in .env.local and restart the server.' },
+          { status: 503 }
+        );
+      }
+
+      try {
+        ocrData = await processReceiptWithVeryfi(file as File);
+      } catch (e: any) {
+        console.error('Veryfi receipt processing failed:', e?.message || e);
+        return NextResponse.json(
+          { error: e?.message || 'Failed to scan receipt with Veryfi.' },
+          { status: 502 }
+        );
+      }
+    }
+
     let storagePath = 'samples/sample_receipt.jpg';
 
     if (file && !isSample) {
@@ -29,110 +109,38 @@ export async function POST(request: Request) {
           upsert: false,
         });
 
-      if (!uploadError && uploadData) {
+      if (uploadError) {
+        console.error('Receipt image upload failed:', uploadError.message);
+
+        const bucketMissing = uploadError.message.toLowerCase().includes('bucket not found');
+        const message = bucketMissing
+          ? "The Supabase 'receipts' storage bucket is missing. Run supabase/migrations/004_receipts_storage.sql in your Supabase SQL Editor, then try again."
+          : `Receipt image upload failed: ${uploadError.message}`;
+
+        return NextResponse.json(
+          { error: message },
+          { status: bucketMissing ? 503 : 502 }
+        );
+      } else if (uploadData) {
         storagePath = uploadData.path;
       }
     }
 
-    // Check for Veryfi API credentials
-    const veryfiClientId = process.env.VERYFI_CLIENT_ID;
-    const veryfiClientSecret = process.env.VERYFI_CLIENT_SECRET;
-    const veryfiUsername = process.env.VERYFI_USERNAME;
-    const veryfiApiKey = process.env.VERYFI_API_KEY;
-
-    let ocrData: any = null;
-
-    if (veryfiClientId && veryfiApiKey && file && !isSample) {
-      try {
-        const buffer = await file.arrayBuffer();
-        const base64Image = Buffer.from(buffer).toString('base64');
-
-        const response = await fetch('https://api.veryfi.com/api/v8/partner/documents', {
-          method: 'POST',
-          headers: {
-            'Content-Type': 'application/json',
-            Accept: 'application/json',
-            'CLIENT-ID': veryfiClientId,
-            AUTHORIZATION: `apikey ${veryfiUsername}:${veryfiApiKey}`,
-          },
-          body: JSON.stringify({
-            file_data: base64Image,
-            file_name: file.name,
-          }),
-        });
-
-        if (response.ok) {
-          ocrData = await response.json();
-        }
-      } catch (e) {
-        console.warn('Veryfi API call failed, falling back to simulated OCR:', e);
-      }
-    }
-
-    // Fallback/Simulated OCR if Veryfi is not configured or in sample mode
-    if (!ocrData) {
-      ocrData = {
-        id: 991823,
-        vendor: { name: 'Trattoria Bella' },
-        date: new Date().toISOString().split('T')[0],
-        currency_code: 'USD',
-        subtotal: 58.0,
-        tax: 5.1,
-        tip: 10.0,
-        discount: 0.0,
-        total: 73.1,
-        line_items: [
-          {
-            id: 1,
-            description: 'Truffle Tagliatelle',
-            quantity: 1,
-            unit_price: 24.0,
-            total: 24.0,
-            category: 'dining',
-          },
-          {
-            id: 2,
-            description: 'Margherita Pizza DOC',
-            quantity: 1,
-            unit_price: 18.0,
-            total: 18.0,
-            category: 'dining',
-          },
-          {
-            id: 3,
-            description: 'Tiramisu Della Casa',
-            quantity: 1,
-            unit_price: 10.0,
-            total: 10.0,
-            category: 'dining',
-          },
-          {
-            id: 4,
-            description: 'San Pellegrino 750ml',
-            quantity: 2,
-            unit_price: 3.0,
-            total: 6.0,
-            category: 'dining',
-          },
-        ],
-      };
-    }
-
-    // Insert receipt into database
     const { data: receipt, error: receiptError } = await supabase
       .from('receipts')
       .insert({
         user_id: user.id,
         storage_path: storagePath,
-        merchant: ocrData.vendor?.name || 'Scanned Merchant',
-        receipt_date: ocrData.date || new Date().toISOString().split('T')[0],
-        currency_code: ocrData.currency_code || 'USD',
+        merchant: ocrData.vendor?.name || ocrData.vendor?.raw_name || 'Scanned Merchant',
+        receipt_date: normalizeReceiptDate(ocrData.date),
+        currency_code: normalizeCurrencyCode(ocrData.currency_code),
         subtotal_minor: toMinorUnits(ocrData.subtotal || 0),
         tax_minor: toMinorUnits(ocrData.tax || 0),
         tip_minor: toMinorUnits(ocrData.tip || 0),
-        discount_minor: toMinorUnits(ocrData.discount || 0),
+        discount_minor: toMinorUnits(Math.abs(ocrData.discount || 0)),
         grand_total_minor: toMinorUnits(ocrData.total || 0),
         processing_status: 'review_required',
+        provider_document_id: ocrData.id != null ? String(ocrData.id) : null,
         ocr_raw: ocrData,
       })
       .select()

@@ -77,7 +77,7 @@ export default async function FriendsPage() {
       expensesPaidByUser={expensesPaidByUser || []}
       settlements={settlements || []}
       currentUserId={user.id}
-      userCurrency={profile?.preferred_currency || 'USD'}
+      userCurrency={profile?.preferred_currency || 'EUR'}
     />
   );
 }

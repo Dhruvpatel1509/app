@@ -21,14 +21,7 @@ import { createClient } from '@/lib/supabase/client';
 import { useAuth } from '@/components/auth/auth-provider';
 
 const CURRENCIES = [
-  { code: 'USD', name: 'US Dollar ($)' },
   { code: 'EUR', name: 'Euro (€)' },
-  { code: 'GBP', name: 'British Pound (£)' },
-  { code: 'CAD', name: 'Canadian Dollar (C$)' },
-  { code: 'AUD', name: 'Australian Dollar (A$)' },
-  { code: 'JPY', name: 'Japanese Yen (¥)' },
-  { code: 'INR', name: 'Indian Rupee (₹)' },
-  { code: 'CHF', name: 'Swiss Franc (CHF)' },
 ];
 
 interface ProfileClientProps {
@@ -52,7 +45,7 @@ export function ProfileClient({
 
   const [displayName, setDisplayName] = useState(profile?.display_name || '');
   const [preferredCurrency, setPreferredCurrency] = useState(
-    profile?.preferred_currency || 'USD'
+    profile?.preferred_currency || 'EUR'
   );
   const [saving, setSaving] = useState(false);
   const [successMsg, setSuccessMsg] = useState(false);

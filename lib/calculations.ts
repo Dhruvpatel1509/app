@@ -1,6 +1,9 @@
 // ============================================================
 // Cashual — Financial Calculation Engine
-// All amounts are integer minor units (e.g., cents for USD)
+export const APP_CURRENCY = 'EUR';
+export const APP_LOCALE = 'de-DE';
+
+// All amounts are integer minor units (e.g., euro cents)
 // This module is pure and has no UI or database dependencies.
 // ============================================================
 
@@ -48,13 +51,13 @@ export function fromMinorUnits(minor: number, decimals = 2): string {
  */
 export function formatCurrency(
   minor: number,
-  currencyCode = 'EUR',
-  locale = 'en-US'
+  _currencyCode = APP_CURRENCY,
+  locale = APP_LOCALE
 ): string {
   const decimal = minor / 100;
   return new Intl.NumberFormat(locale, {
     style: 'currency',
-    currency: currencyCode,
+    currency: APP_CURRENCY,
     minimumFractionDigits: 2,
   }).format(decimal);
 }

@@ -56,7 +56,7 @@ export function BalancesClient({
   const [settleNotes, setSettleNotes] = useState('');
   const [settleLoading, setSettleLoading] = useState(false);
 
-  const currencyCode = userProfile?.preferred_currency || 'USD';
+  const currencyCode = userProfile?.preferred_currency || 'EUR';
 
   // 1. Calculate net balances with each counterpart
   // Net balance > 0: they owe user. Net balance < 0: user owes them.
@@ -523,7 +523,7 @@ export function BalancesClient({
                 </label>
                 <div className="relative">
                   <span className="absolute left-3.5 top-1/2 -translate-y-1/2 text-stone-400 font-bold">
-                    $
+                    €
                   </span>
                   <input
                     type="number"

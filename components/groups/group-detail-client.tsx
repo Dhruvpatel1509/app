@@ -689,7 +689,7 @@ export function GroupDetailClient({
                 </label>
                 <div className="relative">
                   <span className="absolute left-3.5 top-1/2 -translate-y-1/2 text-stone-400 font-bold">
-                    $
+                    €
                   </span>
                   <input
                     type="number"

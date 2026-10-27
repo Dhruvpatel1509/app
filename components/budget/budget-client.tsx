@@ -76,7 +76,7 @@ export function BudgetClient({
   const [budgetAmountStr, setBudgetAmountStr] = useState('');
   const [savingBudget, setSavingBudget] = useState(false);
 
-  const currencyCode = userProfile?.preferred_currency || 'USD';
+  const currencyCode = userProfile?.preferred_currency || 'EUR';
 
   // Calculate personal spending for selected month by category
   // Uses personal_spending_minor so group dinners only count the user's portion!
@@ -274,7 +274,7 @@ export function BudgetClient({
                 />
                 <YAxis tick={{ fontSize: 11, fill: '#78716c' }} tickFormatter={(v) => `$${v}`} />
                 <Tooltip
-                  formatter={(value: any) => [`$${Number(value).toFixed(2)}`]}
+                  formatter={(value: any) => [`€${Number(value).toFixed(2)}`]}
                   contentStyle={{
                     background: '#fff',
                     border: '1px solid #e7e5e4',
@@ -447,7 +447,7 @@ export function BudgetClient({
                 </label>
                 <div className="relative">
                   <span className="absolute left-3.5 top-1/2 -translate-y-1/2 text-stone-400 font-bold">
-                    $
+                    €
                   </span>
                   <input
                     type="number"

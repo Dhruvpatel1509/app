@@ -61,10 +61,10 @@ export function MonthlySpendingChart({ data }: MonthlySpendingChartProps) {
               tick={{ fontSize: 11, fill: '#78716c' }}
               axisLine={false}
               tickLine={false}
-              tickFormatter={(v) => `$${v}`}
+              tickFormatter={(v) => `€${v}`}
             />
             <Tooltip
-              formatter={(value: any) => [`$${(Number(value) || 0).toFixed(2)}`, 'Spending']}
+              formatter={(value: any) => [`€${(Number(value) || 0).toFixed(2)}`, 'Spending']}
               contentStyle={{
                 background: '#fff',
                 border: '1px solid #e7e5e4',

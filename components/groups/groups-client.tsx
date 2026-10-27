@@ -44,7 +44,7 @@ export function GroupsClient({ userId, groups }: { userId: string; groups: Group
 
   const { register, handleSubmit, reset, formState: { errors } } = useForm<CreateGroupForm>({
     resolver: zodResolver(createGroupSchema),
-    defaultValues: { currency_code: 'USD' },
+    defaultValues: { currency_code: 'EUR' },
   });
 
   const filtered = groups.filter((g) =>
