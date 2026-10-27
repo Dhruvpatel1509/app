@@ -1,36 +1,112 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+# 💸 Cashual — Intelligent Expense Sharing & AI Receipt Scanning
 
-## Getting Started
+**Cashual** is a modern, responsive web application for splitting expenses with friends, managing shared group balances, scanning receipts with AI, and tracking personal monthly spending.
 
-First, run the development server:
+Built with Next.js 16, TypeScript, Tailwind CSS, Supabase (PostgreSQL with Row Level Security), and Recharts.
 
+---
+
+## ✨ Features & Highlights
+
+### 1. 🤖 AI Receipt Scanner & Itemized Splitting
+- **Photo Upload & Camera Capture**: Drag and drop receipts or snap photos from mobile and desktop.
+- **AI OCR Processing**: Automatically extracts merchant name, date, itemized line items, subtotal, tax, and tip.
+- **Item-Level Assignment**: Assign specific dishes, groceries, or items directly to the people who shared them.
+- **Proportional Tax & Tip**: Taxes and tips are distributed proportionally to each person's consumed items (or split equally).
+- **Penny-Exact Reconciliation**: Live validator confirms that sum of all member shares matches the receipt total to the exact cent.
+
+### 2. ⚖️ 5 Flexible Split Methods
+- **Equal Split (=)**: Divides total evenly across participants with integer largest-remainder penny distribution.
+- **Exact Amounts ($)**: Assign custom exact amounts with live remaining balance calculation.
+- **Percentages (%)**: Specify custom percentage shares with validation ensuring 100% total.
+- **Shares (Ratios)**: Weighted distribution by shares (e.g. 2 shares : 1 share).
+- **Adjustments (+/-)**: Base equal split with custom plus/minus adjustments.
+
+### 3. 🌐 Groups & Friends Management
+- **Group Spaces**: Create custom groups (Apartment, Road Trip, Dinner Club) with individual currency configurations.
+- **Friendships**: Search and add friends by `@username`, manage incoming/outgoing requests.
+- **Group Detail Feed**: Chronological list of shared expenses, member balances, settle up shortcuts, and invite links.
+
+### 4. 🔀 Debt Simplification & Settle Up
+- **Debt Graph Optimization**: Uses a bipartite greedy reduction algorithm to minimize the total number of transactions needed to settle all debts in a group.
+- **1-Click Settlement**: Record payments made in cash, Venmo, Zelle, or PayPal, automatically updating net balances without altering historical expense records.
+
+### 5. 📊 Personal Budgets & Analytics
+- **True Personal Spending**: Only your allocated share of group expenses counts toward your personal spending budget.
+- **Category Progress Bars**: Real-time spending progress by category (Dining, Groceries, Transport, Entertainment, etc.) with automatic color indicators (Green / Amber / Red).
+- **Interactive Visualizations**: Monthly spending area charts and category breakdown pie charts built with Recharts.
+
+---
+
+## 🛠️ Tech Stack
+
+- **Framework**: Next.js 16 (App Router, Turbopack)
+- **Language**: TypeScript (Strict Mode)
+- **Styling**: Tailwind CSS, Lucide Icons, Glassmorphic Emerald Dark/Light theme
+- **Database & Auth**: Supabase PostgreSQL with Row Level Security (RLS)
+- **OCR Engine**: Veryfi API integration with simulated testing fallback
+- **Charts**: Recharts
+- **Forms & Validation**: React Hook Form, Zod
+- **Testing**: Vitest with 100% passing financial test suite
+
+---
+
+## 🚀 Getting Started
+
+### 1. Prerequisites
+- Node.js 18+ installed
+- A free [Supabase](https://supabase.com) account
+
+### 2. Installation
 ```bash
-npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
+cd app
+npm install
 ```
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+### 3. Environment Variables
+Copy `.env.example` to `.env.local`:
+```bash
+cp .env.example .env.local
+```
+Fill in your Supabase project credentials:
+```env
+NEXT_PUBLIC_SUPABASE_URL=https://your-project.supabase.co
+NEXT_PUBLIC_SUPABASE_ANON_KEY=your-anon-key
+NEXT_PUBLIC_APP_URL=http://localhost:3000
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+# Optional: Veryfi OCR credentials for production receipt scanning
+# VERYFI_CLIENT_ID=your-client-id
+# VERYFI_USERNAME=your-username
+# VERYFI_API_KEY=your-api-key
+```
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+### 4. Database Setup
+Execute the migration scripts in your Supabase SQL Editor in order:
+1. `supabase/migrations/001_initial_schema.sql` (Tables, constraints, minor-unit money rules)
+2. `supabase/migrations/002_rls_policies.sql` (Row Level Security policies)
+3. `supabase/migrations/003_functions_and_triggers.sql` (Auto-profile creation on signup, timestamps)
 
-## Learn More
+### 5. Run Development Server
+```bash
+npm run dev
+```
+Open [http://localhost:3000](http://localhost:3000) in your browser.
 
-To learn more about Next.js, take a look at the following resources:
+---
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
+## 🧪 Running Tests & Build
 
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
+```bash
+# Run Vitest financial unit tests
+npm test
 
-## Deploy on Vercel
+# Run Next.js production build
+npm run build
+```
 
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
+---
 
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+## 🛡️ Financial Integrity Principles
+- **Minor Units Storage**: All money values (`total_minor`, `tax_minor`, `owed_amount_minor`, etc.) are stored as integers (cents) in PostgreSQL to prevent floating-point rounding errors.
+- **Largest-Remainder Algorithm**: When division leaves remainder pennies, they are allocated in order of highest fractional remainder. Sum of splits always equals total expense.
+- **Settlement Immutability**: Settlements create separate payment records and never mutate or overwrite original expense splits.

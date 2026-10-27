@@ -15,7 +15,7 @@ CREATE TABLE public.profiles (
   username       TEXT UNIQUE NOT NULL,
   display_name   TEXT NOT NULL,
   avatar_url     TEXT,
-  preferred_currency TEXT NOT NULL DEFAULT 'USD',
+  preferred_currency TEXT NOT NULL DEFAULT 'EUR',
   created_at     TIMESTAMPTZ NOT NULL DEFAULT NOW(),
   updated_at     TIMESTAMPTZ NOT NULL DEFAULT NOW()
 );
@@ -53,7 +53,7 @@ CREATE TABLE public.groups (
   name          TEXT NOT NULL,
   description   TEXT,
   created_by    UUID NOT NULL REFERENCES public.profiles(id) ON DELETE RESTRICT,
-  currency_code TEXT NOT NULL DEFAULT 'USD',
+  currency_code TEXT NOT NULL DEFAULT 'EUR',
   created_at    TIMESTAMPTZ NOT NULL DEFAULT NOW(),
   updated_at    TIMESTAMPTZ NOT NULL DEFAULT NOW()
 );
@@ -82,7 +82,7 @@ CREATE TABLE public.receipts (
   storage_path         TEXT NOT NULL,
   merchant             TEXT,
   receipt_date         DATE,
-  currency_code        TEXT NOT NULL DEFAULT 'USD',
+  currency_code        TEXT NOT NULL DEFAULT 'EUR',
   subtotal_minor       BIGINT NOT NULL DEFAULT 0,
   tax_minor            BIGINT NOT NULL DEFAULT 0,
   tip_minor            BIGINT NOT NULL DEFAULT 0,
@@ -111,7 +111,7 @@ CREATE TABLE public.expenses (
   group_id        UUID REFERENCES public.groups(id) ON DELETE SET NULL,
   paid_by         UUID NOT NULL REFERENCES public.profiles(id) ON DELETE RESTRICT,
   created_by      UUID NOT NULL REFERENCES public.profiles(id) ON DELETE RESTRICT,
-  currency_code   TEXT NOT NULL DEFAULT 'USD',
+  currency_code   TEXT NOT NULL DEFAULT 'EUR',
   category        TEXT NOT NULL DEFAULT 'other',
   split_method    TEXT NOT NULL DEFAULT 'equal'
                     CHECK (split_method IN (
@@ -209,7 +209,7 @@ CREATE TABLE public.settlements (
   payer_id        UUID NOT NULL REFERENCES public.profiles(id) ON DELETE RESTRICT,
   recipient_id    UUID NOT NULL REFERENCES public.profiles(id) ON DELETE RESTRICT,
   group_id        UUID REFERENCES public.groups(id) ON DELETE SET NULL,
-  currency_code   TEXT NOT NULL DEFAULT 'USD',
+  currency_code   TEXT NOT NULL DEFAULT 'EUR',
   amount_minor    BIGINT NOT NULL,
   settlement_date DATE NOT NULL DEFAULT CURRENT_DATE,
   notes           TEXT,
@@ -245,7 +245,7 @@ CREATE TABLE public.budgets (
   category_name   TEXT NOT NULL,
   budget_month    DATE NOT NULL, -- First day of the month
   amount_minor    BIGINT NOT NULL,
-  currency_code   TEXT NOT NULL DEFAULT 'USD',
+  currency_code   TEXT NOT NULL DEFAULT 'EUR',
   created_at      TIMESTAMPTZ NOT NULL DEFAULT NOW(),
   updated_at      TIMESTAMPTZ NOT NULL DEFAULT NOW(),
   UNIQUE (user_id, category_name, budget_month)
